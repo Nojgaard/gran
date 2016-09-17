@@ -1,5 +1,9 @@
 import quandl
 from Stock import Stock
+import pandas as pd
+
+# quandl api authentication
+quandl.ApiConfig.api_key = '-b2fk-v3un2si3_FB18U'
 
 class StockMarket:
     def __init__(self, stocks_path):
@@ -12,8 +16,15 @@ class StockMarket:
     def stocks(self):
         return self.m_stocks
 
-    def history(self):
+    def history(self,start,end):
         req_stocks = [x.code() + ".4" for x in self.stocks()]
-        data = quandl.get(req_stocks, start_date="2015-06-01", end_date="2016-01-01")
+        data = quandl.get(req_stocks, start_date=start, end_date=end)
+        return data
+        
+    def clean_history(self, data):
+        data = data.dropna(axis = 0)
         return data
 
+    def correlation(self, stocks):
+        sc = stocks.corr()
+        return sc
