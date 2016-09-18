@@ -53,5 +53,11 @@ def compute_pairs(hist):
     dist = distance(hist)
     print("Distance Matrix:")
     print(dist)
+    
+    pairs = []
+    for a, b in itertools.combinations_with_replacement(corr.columns, 2):
+        if corr[a][b] >= 0.8 and corr[a][b] != 1:
+            pairs.append([a,b])
+    return pairs
 
 
