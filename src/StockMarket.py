@@ -19,12 +19,5 @@ class StockMarket:
     def history(self,start,end):
         req_stocks = [x.code() + ".4" for x in self.stocks()]
         data = quandl.get(req_stocks, start_date=start, end_date=end)
+        data = data.dropna(axis = 1)
         return data
-        
-    def clean_history(self, data):
-        data = data.dropna(axis = 0)
-        return data
-
-    def correlation(self, stocks):
-        sc = stocks.corr()
-        return sc
