@@ -11,10 +11,10 @@ sm = StockMarket(stocks_path)
 #print(PairTrading.example())
 
 #print(PairTrading.compute_pairs(sh))
-start_date = date(2015, 5, 1)
+start_date = date(2015, 5, 20)
 end_date = date(2015, 6, 2)
 #print(StockMarket.daterange(start_date, end_date))
-print(StockMarket.trade(sm, start_date, end_date))
+print(sm.trade(start_date, end_date))
 
 # clean_sh = sm.clean_history(sh)
 # print(clean_sh.corr())

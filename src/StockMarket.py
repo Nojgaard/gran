@@ -23,15 +23,15 @@ class StockMarket:
         data = data.dropna(axis = 1)
         return data
         
-    def daterolling(start, end):
+    '''def daterolling(start, end):
         for n in range(int((end - start).days)):
             single_date = start + timedelta(n)
             
             #print(single_date.strftime("%Y-%m-%d"))
-            yield single_date
+            yield single_date'''
     
-    def trade(stocks, start, end):
+    def trade(self, start, end):
         trading_stocks = [x.code() + ".4" for x in self.stocks()]
-        for single_date in (StockMarket.daterolling(start, end)):      
-            prices = quandl.get(trading_stocks, start_date=single_date, end_date=single_date)
-            print(prices)
+        prices = quandl.get(trading_stocks, start_date=start, end_date=end)
+        for i in range(0, len(prices)):
+            print(prices.iloc[i])
