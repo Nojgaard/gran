@@ -1,10 +1,11 @@
 class Stock:
-    def __init__(self, name, code):
-        self.m_name = name
-        self.m_code = code
-
-    def name(self):
-        return self.m_name
+    def __init__(self):
+        self.name = ""
+        self.dataset_code = ""
+        self.database_code = ""
 
     def code(self):
-        return self.m_code
+        return self.database_code + "/" + self.dataset_code
+
+    def __str__(self):
+        return self.code() + "\t" + self.name.partition("(")[0]
