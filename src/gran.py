@@ -1,6 +1,8 @@
-from StockMarket import StockMarket
+# from StockMarket import StockMarket
 import PairTrading
+from PairTrader import PairTrader
 import Database
+from BackTest import back_test
 from datetime import date
 
 # stocks_path = "data/WIKI_subset.csv"
@@ -13,8 +15,12 @@ for stock in stocks:
 
 # sm = StockMarket(stocks_path)
 print()
-sh = Database.get_history(stocks, "2015-06-01","2016-01-01")
-print(sh)
+sh = Database.get_history(stocks, "2015-10-01","2016-01-01")
+
+pair_trader = PairTrader()
+
+back_test(sh, pair_trader)
+# print(sh)
 # sm = StockMarket(stocks_path)
 #sh = sm.history("2015-06-01","2016-01-01")
 # print(sh.corr())
