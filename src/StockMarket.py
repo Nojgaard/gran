@@ -30,7 +30,7 @@ class StockMarket:
             #print(single_date.strftime("%Y-%m-%d"))
             yield single_date'''
     
-    def trade(self, start, end):
+    def trade(self, securities, start, end):
         trading_stocks = [x.code() + ".4" for x in self.stocks()]
         prices = quandl.get(trading_stocks, start_date=start, end_date=end)
         for i in range(0, len(prices)):
