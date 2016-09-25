@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 class StockMarket:
     def __init__(self, history):
         self.history = history
@@ -18,12 +20,12 @@ class StockMarket:
         data = data.dropna(axis = 1)
         return data
         
-    '''def daterolling(start, end):
+    def daterolling(start, end):
         for n in range(int((end - start).days)):
             single_date = start + timedelta(n)
             
             #print(single_date.strftime("%Y-%m-%d"))
-            yield single_date'''
+            yield single_date
     
     def trade(self, securities, start, end):
         trading_stocks = [x.code() + ".4" for x in self.stocks()]

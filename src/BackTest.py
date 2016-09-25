@@ -2,12 +2,14 @@ from math import floor, ceil
 from StockMarket import StockMarket
 from Portfolio import Portfolio
 import pandas as pd
+from datetime import date, datetime
 
 def back_test(history, pair_trader, start_balance):
     ratio = 2.0 / 3
     training_data = history.head(floor(len(history) * ratio))
     test_data = history.tail(ceil(len(history) * (1 - ratio)))
     
+    # Pairs bliver pt. lavet på baggrund af training_data. Vi skal have lavet en rigtig pair inddeling.
     pair_trader.learn_pairs(training_data)
     print("PAIRS:")
     print(pair_trader.pairs)
@@ -40,6 +42,55 @@ def back_test(history, pair_trader, start_balance):
     pair_zscore = (todays_spread - pair_mean) / pair_std
     print('Pair zscore')
     print(pair_zscore)
+    
+    # 2. Backtesting ved at rulle igennem den ønskede test periode.
+    
+    start_period = date(2015, 10, 1)
+    end_period = date(2016, 1, 1)
+    
+    # 2.1 Denne funktion trækker den daglige pris for hver dag i history variablen og gemmes som daily_price.
+    pairs = pair_trader.pairs
+    active_pairs = pd.Series(False, index=[pairs])
+    longs = []
+    shorts = []
+    
+    for d in StockMarket.daterolling(start_period, end_period):
+    	d = d.strftime('%Y%m%d')
+    	if any(history.index == d):
+    		daily_price = history.loc[d]
+    		
+    		# 2.2 Her handler vi de pairs vi har i pair_trader.pairs
+    		for pair in pair_trader.pairs:
+    			# Antager her alle pairs skal handles.
+    			if active_pairs.loc[pair] == False:
+    				active_pairs.loc[pair] = True
+    				for stock in pair:
+    					if stock == pair[0]:
+    						longs.append([stock, d])
+    					else:
+    						shorts.append([stock, d])
+    
+    print('Longs:')
+    print(longs)
+    print('Shorts')
+    print(shorts)
+    
+    # 3. Check profits. Hvis handler stadig er åbne, medregnes disse som var de lukket i dag.
+    # Tjekker først profits i longs.
+    profit = 0
+    print(history)
+    for trades in longs:
+    	price = history.loc[trades[1]][trades[0]]
+    	close = history[trades[0]].tail(1)
+    	profit = profit + close - price
+    
+    for trades in shorts:
+    	price = history.loc[trades[1]][trades[0]]
+    	close = history[trades[0]].tail(1)
+    	profit = profit + price - close
+    	
+    print('Profits:')
+    print(profit)
     
     stock_market = StockMarket(test_data)
     portfolio = Portfolio(stock_market, pair_trader.pairs, start_balance)
