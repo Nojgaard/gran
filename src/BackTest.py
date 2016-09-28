@@ -3,6 +3,11 @@ from StockMarket import StockMarket
 from Portfolio import Portfolio
 import pandas as pd
 from datetime import date, datetime
+import PairTrading
+
+def get_history_from_date(history, period):
+	return history.tail(period)
+	
 
 def back_test(history, pair_trader, start_balance):
     ratio = 2.0 / 3
@@ -53,11 +58,28 @@ def back_test(history, pair_trader, start_balance):
     active_pairs = pd.Series(False, index=[pairs])
     longs = []
     shorts = []
+    month = ''
+    period = 10
     
+    # 2.1.1 Dette loop kører hver enkelte dato igennem.
     for d in StockMarket.daterolling(start_period, end_period):
+    	monthly_call = d.month
     	d = d.strftime('%Y%m%d')
     	if any(history.index == d):
+    		# Gem daglig pris og historik periode
     		daily_price = history.loc[d]
+    		history_period = get_history_from_date(history, period)
+    		
+    		# 2.1.2 Nedenstående if bliver kun kaldt hver måned.
+    		if month == '' or month != monthly_call:
+    			month = monthly_call
+    			
+    			# 2.1.3 Finder nu pairs for hver måned
+    			pairs = PairTrading.compute_pairs(history_period)
+    			print('Monthly Pairs')
+    			print(pairs)
+    			
+    		# 2.1.2 Slut
     		
     		# 2.2 Her handler vi de pairs vi har i pair_trader.pairs
     		for pair in pair_trader.pairs:
@@ -78,15 +100,16 @@ def back_test(history, pair_trader, start_balance):
     # 3. Check profits. Hvis handler stadig er åbne, medregnes disse som var de lukket i dag.
     # Tjekker først profits i longs.
     profit = 0
-    print(history)
     for trades in longs:
     	price = history.loc[trades[1]][trades[0]]
-    	close = history[trades[0]].tail(1)
+    	close = history[trades[0]].iloc[-1]
+    	print(close - price)
     	profit = profit + close - price
     
     for trades in shorts:
     	price = history.loc[trades[1]][trades[0]]
-    	close = history[trades[0]].tail(1)
+    	close = history[trades[0]].iloc[-1]
+    	print(price - close)
     	profit = profit + price - close
     	
     print('Profits:')
