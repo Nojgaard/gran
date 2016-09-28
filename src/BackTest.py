@@ -55,7 +55,7 @@ def back_test(history, pair_trader, start_balance):
     
     # 2.1 Denne funktion trækker den daglige pris for hver dag i history variablen og gemmes som daily_price.
     pairs = pair_trader.pairs
-    active_pairs = pd.Series(False, index=[pairs])
+    active_pairs = []
     longs = []
     shorts = []
     month = ''
@@ -76,16 +76,17 @@ def back_test(history, pair_trader, start_balance):
     			
     			# 2.1.3 Finder nu pairs for hver måned
     			pairs = PairTrading.compute_pairs(history_period)
-    			print('Monthly Pairs')
-    			print(pairs)
     			
     		# 2.1.2 Slut
-    		
+    		print('Pair_Trader.pairs')
+    		print(pair_trader.pairs)
+    		print('Pairs')
+    		print(pairs)
     		# 2.2 Her handler vi de pairs vi har i pair_trader.pairs
-    		for pair in pair_trader.pairs:
+    		for pair in pairs:
     			# Antager her alle pairs skal handles.
-    			if active_pairs.loc[pair] == False:
-    				active_pairs.loc[pair] = True
+    			if pair not in active_pairs:
+    				active_pairs.append(pair)
     				for stock in pair:
     					if stock == pair[0]:
     						longs.append([stock, d])
@@ -113,7 +114,7 @@ def back_test(history, pair_trader, start_balance):
     	profit = profit + price - close
     	
     print('Profits:')
-    print(profit)
+    print(str(profit) + '$')
     
     stock_market = StockMarket(test_data)
     portfolio = Portfolio(stock_market, pair_trader.pairs, start_balance)
